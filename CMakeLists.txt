@@ -78,3 +78,16 @@ elseif(MSVC)
 else()
     target_link_libraries(hello X11 Xext GL)
 endif()
+
+add_executable(move
+    ${CMAKE_SOURCE_DIR}/imnodes.cpp
+    ${CMAKE_SOURCE_DIR}/example/main.cpp
+    ${CMAKE_SOURCE_DIR}/example/move.cpp)
+target_link_libraries(move imnodes SDL2::SDL2)
+if (APPLE)
+    target_link_libraries(move "-framework OpenGL")
+elseif(MSVC)
+    target_link_libraries(move "opengl32")
+else()
+    target_link_libraries(move X11 Xext GL)
+endif()
