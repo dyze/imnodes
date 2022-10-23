@@ -134,6 +134,7 @@ struct ImNodeData
     ImVec2 Origin; // The node origin is in editor space
     ImRect TitleBarContentRect;
     ImRect Rect;
+    bool   Moved = false; // true if node has been moved
 
     struct
     {
@@ -264,7 +265,7 @@ struct ImNodesEditorContext
     // Relative origins of selected nodes for snapping of dragged nodes
     ImVector<ImVec2> SelectedNodeOffsets;
     // Offset of the primary node origin relative to the mouse cursor.
-    ImVec2           PrimaryNodeOffset;
+    ImVec2 PrimaryNodeOffset;
 
     ImClickInteractionState ClickInteraction;
 
@@ -275,6 +276,7 @@ struct ImNodesEditorContext
     float                                      MiniMapSizeFraction;
     ImNodesMiniMapNodeHoveringCallback         MiniMapNodeHoveringCallback;
     ImNodesMiniMapNodeHoveringCallbackUserData MiniMapNodeHoveringCallbackUserData;
+    ImNodesMiniMapNodeHoveringCallback         NodeMoveCallback;
 
     // Mini-map state set during EndNodeEditor() call
 
@@ -285,10 +287,14 @@ struct ImNodesEditorContext
     ImNodesEditorContext()
         : Nodes(), Pins(), Links(), Panning(0.f, 0.f), SelectedNodeIndices(), SelectedLinkIndices(),
           SelectedNodeOffsets(), PrimaryNodeOffset(0.f, 0.f), ClickInteraction(),
-          MiniMapEnabled(false), MiniMapSizeFraction(0.0f),
-          MiniMapNodeHoveringCallback(NULL), MiniMapNodeHoveringCallbackUserData(NULL),
-          MiniMapScaling(0.0f)
+          MiniMapEnabled(false), MiniMapSizeFraction(0.0f), MiniMapNodeHoveringCallback(NULL),
+          MiniMapNodeHoveringCallbackUserData(NULL), MiniMapScaling(0.0f)
     {
+    }
+
+    void SetNodeMoveCallback(ImNodesMiniMapNodeHoveringCallback callback)
+    {
+        NodeMoveCallback = callback;
     }
 };
 

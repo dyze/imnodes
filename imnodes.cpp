@@ -844,7 +844,30 @@ void TranslateSelectedNodes(ImNodesEditorContext& editor)
             if (node.Draggable && shouldTranslate)
             {
                 node.Origin = origin + node_rel + editor.AutoPanningDelta;
+                node.Moved = true;
+
+                if (GImNodes->LeftMouseReleased)
+                {
+                    if (editor.NodeMoveCallback)
+                        editor.NodeMoveCallback(node_idx, NULL);
+                }
             }
+        }
+    }
+}
+
+void SendNodeMovedNotifications(ImNodesEditorContext& editor)
+{
+    for (int i = 0; i < editor.SelectedNodeIndices.size(); ++i)
+    {
+        const int   node_idx = editor.SelectedNodeIndices[i];
+        ImNodeData& node = editor.Nodes.Pool[node_idx];
+        if (node.Moved)
+        {
+            node.Moved = false;
+
+            if (editor.NodeMoveCallback)
+                editor.NodeMoveCallback(node_idx, NULL);
         }
     }
 }
@@ -989,6 +1012,7 @@ void ClickInteractionUpdate(ImNodesEditorContext& editor)
         if (GImNodes->LeftMouseReleased)
         {
             editor.ClickInteraction.Type = ImNodesClickInteractionType_None;
+            SendNodeMovedNotifications(editor);
         }
     }
     break;
@@ -1735,7 +1759,7 @@ static inline void CalcMiniMapLayout()
         const ImVec2 grid_content_size = editor.GridContentBounds.IsInverted()
                                              ? max_size
                                              : ImFloor(editor.GridContentBounds.GetSize());
-        const float grid_content_aspect_ratio = grid_content_size.x / grid_content_size.y;
+        const float  grid_content_aspect_ratio = grid_content_size.x / grid_content_size.y;
         mini_map_size = ImFloor(
             grid_content_aspect_ratio > max_size_aspect_ratio
                 ? ImVec2(max_size.x, max_size.x / grid_content_aspect_ratio)

@@ -81,6 +81,7 @@ endif()
 
 add_executable(move
     ${CMAKE_SOURCE_DIR}/imnodes.cpp
+    ${CMAKE_SOURCE_DIR}/example/tools/log.cpp
     ${CMAKE_SOURCE_DIR}/example/main.cpp
     ${CMAKE_SOURCE_DIR}/example/move.cpp)
 target_link_libraries(move imnodes SDL2::SDL2)
